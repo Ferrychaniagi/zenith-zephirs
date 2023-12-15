@@ -1,0 +1,305 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
+
+public class GameManager : MonoBehaviour
+{
+    int Energy;
+    int MaxEnergy = 100;
+
+    int Uang;
+    
+    int Kewarasan;
+    int MaxKewarasan = 100;
+
+    int Hari;
+    int TambahHari = 1;
+
+    int Ibu;
+    int MaxIbu = 6;
+    
+    int Ayang;
+    int MaxAyang = 6;
+
+    int CostWork = 50;
+    int CostWatch = 30;
+    int CostDate = 10;
+
+    int IbuEvent = 7;
+    int Ending = 30;
+
+
+    public TextMeshProUGUI EnergyText;
+    public TextMeshProUGUI KewarasanText;
+    public TextMeshProUGUI HariText;
+    public TextMeshProUGUI UangText;
+    public TextMeshProUGUI IbuText;
+    public TextMeshProUGUI AyangText;
+
+    public Slider EnergySlider;
+    public Slider KewarasanSlider;
+
+    public GameObject MessagePanel;
+    public TextMeshProUGUI MessageText;
+
+    public GameObject NextDayPanel;
+    public GameObject WorkPanel;
+    public GameObject AktivPanel;
+   
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
+        setupgame();
+    }
+
+    public void UpdateUI()
+    {
+        BarMax();
+        EnergyText.text = "Energy: " + Energy;
+        UangText.text = "Uang: " + Uang;
+        KewarasanText.text = "Kewarasan: " + Kewarasan;
+        HariText.text = "" + Hari;
+        IbuText.text = "Ibu: " + Ibu;
+        AyangText.text = "Rebeca: " + Ayang;
+        KewarasanSlider.value = Kewarasan;
+        EnergySlider.value = Energy;
+
+
+        if (Kewarasan <= 0)
+            YouCreazy();
+        if (Uang <= 0)
+            YouPoor();
+
+    }
+   
+    public void BarMax()
+    {
+        if (Energy > MaxEnergy)
+            Energy = MaxEnergy;
+
+        if (Kewarasan > MaxKewarasan)
+            Kewarasan = MaxKewarasan;
+
+        if (Ibu > MaxIbu)
+            Ibu = MaxIbu;
+
+        if (Ayang > MaxAyang)
+            Ayang = MaxAyang;
+    }
+
+
+    public void ClickWorkButton()
+    {
+        if (Energy - CostWork >= 0)
+        {
+            DisplayWorkPanel();
+            Energy = Energy - CostWork;
+            Uang = Uang + 100000;
+            Kewarasan = Kewarasan - 30;
+            UpdateUI();
+        }
+        else
+        {
+            DisplayMessage("Energy Kurang");
+        }
+
+
+    }
+
+    public void ClickPlayButton()
+    {
+
+        if (Energy - CostWork >= 0)
+        {
+            Energy = Energy - CostWork;
+            Kewarasan = Kewarasan + 30;
+            Uang = Uang - 50000;
+            UpdateUI();
+        }
+        else
+        {
+            DisplayMessage("Energy Kurang");
+        }
+    }
+
+    public void ClickWatchButton()
+    {
+        if (Energy - CostWatch >= 0)
+        {
+            Energy = Energy - CostWatch;
+            Kewarasan = Kewarasan + 20;
+            Uang = Uang - 30000;
+            UpdateUI();
+        }
+        else
+        {
+         
+            DisplayMessage("Energy Kurang");
+        }
+    }
+
+    public void ClickSleepButton()
+    {
+        DisplayNextDay();
+        Energy = MaxEnergy;
+        Kewarasan = Kewarasan + 20;
+        Uang = Uang - 50000;
+        Hari = Hari + TambahHari;
+        UpdateUI();
+
+    }
+    
+    public void setupgame()
+    {
+        Energy = MaxEnergy;
+        EnergySlider.maxValue = MaxEnergy;
+
+        Kewarasan = MaxKewarasan;
+        KewarasanSlider.maxValue = MaxKewarasan;
+
+        Ibu = MaxIbu;
+        Ayang = 0;
+        Hari = 1;
+        Uang = 200000;
+        UpdateUI();
+
+    }
+    
+    public void AktivitasButton()
+    {
+        AktivPanel.SetActive(true);
+    }
+
+    public void EscButton()
+    {
+        AktivPanel.SetActive(false);
+    }
+
+    public void ClickIbuButton()
+    {
+        if (Energy - CostDate >= 0)
+        {
+            Debug.Log("Enggak Tau Ngapain");
+            UpdateUI();
+        }
+    }
+    public void ClickAyangButton()
+    {
+        if (Energy - CostDate >= 0)
+        {
+
+            Debug.Log("Ngedate");
+            UpdateUI();
+        }
+    }
+
+
+    public void YouCreazy()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void YouPoor()
+    {
+        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
+    }
+
+    public void DisplayMessage(string value)
+    {
+        MessageText.text = value;
+        MessagePanel.SetActive(true);
+        Invoke("HideMessage", 1);
+    }
+
+    public void HideMessage()
+    {
+        GameObject.Find("GameManager").GetComponent<GameManager>();
+        MessagePanel.SetActive(false);
+    }
+
+    public void DisplayNextDay()
+    {
+        
+        NextDayPanel.SetActive(true);
+        Invoke("HideNextDay", 2);
+    }
+
+    public void HideNextDay()
+    {
+        GameObject.Find("GameManager").GetComponent<GameManager>();
+        NextDayPanel.SetActive(false);
+    }
+
+    public void DisplayWorkPanel()
+    {
+
+        WorkPanel.SetActive(true);
+        Invoke("HideWorkPanel", 2);
+    }
+
+    public void HideWorkPanel()
+    {
+        GameObject.Find("GameManager").GetComponent<GameManager>();
+        WorkPanel.SetActive(false);
+    }
+
+    public void EventIbu()
+    {
+        if (Hari == IbuEvent)
+        {
+            Debug.Log("Ibu Nelpon");
+
+
+        }
+    }
+
+    public void EndingScene()
+    {
+        if (Hari == Ending)
+        {
+            if (Ibu == MaxIbu && Ayang == MaxAyang && Uang >= 2000000)
+            {
+                Debug.Log("Ending Best");
+            }
+            
+            
+            else if (Ibu > 1 && Uang > 1 )
+            {
+                if (Ayang == MaxAyang)
+                {
+                    Debug.Log("Ending Heroin");
+                }
+                else if (Uang >= 2000000)
+                {
+                    Debug.Log("Ending Workaholic");
+                }
+                else {
+                    Debug.Log("Ending Normal");
+                    }
+            }
+
+
+
+        }
+
+    }
+
+
+
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        EndingScene();
+
+
+    }
+}
