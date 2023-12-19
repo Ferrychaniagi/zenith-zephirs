@@ -1,0 +1,111 @@
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Dialog_Manager : MonoBehaviour
+{
+
+    public enum ImagePosition
+    {
+        Left,
+        Right
+    }
+
+    [System.Serializable]
+    public class DialogueSegment
+    {
+        public Sprite subjectImage1;
+        public ImagePosition imagePosition;
+        public string SubjectText;
+        [TextArea]
+        public string DialogueToPrint;
+        public bool Skippable;
+
+        [Range(0f, 100f)]
+        public float LetterPerSecond;
+    }
+
+    [SerializeField] private DialogueSegment[] DialogueSegments;
+    [Space]
+    [SerializeField] private TMP_Text SubjectText;
+    [SerializeField] private TMP_Text BodyText;
+    [SerializeField] private Image SubjectImage1;
+    
+
+    private int DialogueIndex;
+    private bool PlayingDialogue;
+    private bool skip;
+
+
+    void Start()
+    {
+        StartCoroutine(playDialogue(DialogueSegments[DialogueIndex]));
+    }
+
+   
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (DialogueIndex == DialogueSegments.Length)
+            {
+                enabled = false;
+                return;
+            }
+            if (!PlayingDialogue)
+            {
+                StartCoroutine(playDialogue(DialogueSegments[DialogueIndex]));
+            }
+            else
+            {
+                if (DialogueSegments[DialogueIndex].Skippable)
+                {
+                    skip = true;
+                }
+            }
+        }
+    }
+
+    private IEnumerator playDialogue(DialogueSegment segment)
+    {
+        PlayingDialogue = true;
+
+        BodyText.SetText(string.Empty);
+        SubjectText.SetText (segment.SubjectText);
+        SubjectImage1.sprite = segment.subjectImage1;
+       
+
+        if (segment.imagePosition == ImagePosition.Left)
+        {
+            SubjectImage1.rectTransform.anchoredPosition = new Vector2(-700,400);
+        }
+        else
+        {
+            SubjectImage1.rectTransform.anchoredPosition = new Vector2(700, 400);
+        }
+
+        float delay = 1f / segment.LetterPerSecond;
+        for (int i = 0; i < segment.DialogueToPrint.Length; i++)
+        {
+            if (skip)
+            {
+                BodyText.SetText(segment.DialogueToPrint);
+                skip= false;
+                break;
+            }
+            string chunkToAdd = string.Empty;
+            chunkToAdd += segment.DialogueToPrint[i];
+            if (segment.DialogueToPrint[i] == ' ' && i < segment.DialogueToPrint.Length - 1)
+            {
+                chunkToAdd = segment.DialogueToPrint.Substring(i, 2);
+                i++;
+            }
+
+            BodyText.text += chunkToAdd;
+            yield return new WaitForSeconds (delay);
+        }
+        PlayingDialogue = false;
+        DialogueIndex++;
+    }
+}
