@@ -1,0 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+public class EndBest : MonoBehaviour
+{
+
+    public GameObject PanelOne;
+    public GameObject PanelTwo;
+    public GameObject PanelThree;
+
+
+    private void Start()
+    {
+        PanelOne.SetActive(true);
+        PanelTwo.SetActive(false);
+        PanelThree.SetActive(false);
+    }
+
+
+    public void ClickNextPanelOne()
+    {
+        GameObject.Find("EndManager").GetComponent<GameManager>();
+        PanelTwo.SetActive(true);
+
+    }
+    public void ClickNextPanelTwo()
+    {
+        GameObject.Find("EndManager").GetComponent<GameManager>();
+        PanelThree.SetActive(true);
+    }
+    public void ClickNextPanelThree()
+    {
+
+        SceneManager.LoadScene("CreditScene");
+    }
+    
+
+}
