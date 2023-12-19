@@ -1,0 +1,41 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class Text_animasi : MonoBehaviour
+{
+    [TextArea]
+    public string m_text;
+    public float m_characterInterval;
+
+    private string m_parialText;
+    private float m_cumulativDeltaTime;
+
+
+    private Text m_Label;
+
+    private void Awake()
+    {
+        m_Label = GetComponent<Text>();
+    }
+
+    void Start()
+    {
+        m_parialText = "";
+        m_cumulativDeltaTime = 0;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        m_cumulativDeltaTime += Time.deltaTime;
+         while (m_cumulativDeltaTime > m_characterInterval && m_parialText.Length < m_text.Length)
+        {
+            m_parialText += m_text[m_parialText.Length];
+            m_cumulativDeltaTime -= m_characterInterval;
+        }
+        m_Label.text = m_parialText;
+    }
+}
