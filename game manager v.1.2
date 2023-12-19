@@ -20,16 +20,18 @@ public class GameManager : MonoBehaviour
     int TambahHari = 1;
 
     int Ibu;
-    int MaxIbu = 6;
+    int MaxIbu = 100;
     
     int Ayang;
-    int MaxAyang = 6;
+    int MaxAyang = 100;
 
     int CostWork = 50;
+    int CostPlay = 40;
     int CostWatch = 30;
-    int CostDate = 10;
-
-    int IbuEvent = 7;
+    int CostDate = 50;
+    int CostIbu = 10;
+    int CostUangDate = 100;
+   
     int Ending = 30;
 
 
@@ -42,6 +44,7 @@ public class GameManager : MonoBehaviour
 
     public Slider EnergySlider;
     public Slider KewarasanSlider;
+ 
 
     public GameObject MessagePanel;
     public TextMeshProUGUI MessageText;
@@ -49,6 +52,9 @@ public class GameManager : MonoBehaviour
     public GameObject NextDayPanel;
     public GameObject WorkPanel;
     public GameObject AktivPanel;
+    public GameObject HpPanel;
+    public GameObject RelationPanel;
+    public GameObject HelpPanel;
    
 
     // Start is called before the first frame update
@@ -62,19 +68,21 @@ public class GameManager : MonoBehaviour
     {
         BarMax();
         EnergyText.text = "Energy: " + Energy;
-        UangText.text = "Uang: " + Uang;
+        UangText.text = "" + Uang + " K";
         KewarasanText.text = "Kewarasan: " + Kewarasan;
         HariText.text = "" + Hari;
-        IbuText.text = "Ibu: " + Ibu;
-        AyangText.text = "Rebeca: " + Ayang;
+        IbuText.text = "" + Ibu +" /100";
+        AyangText.text = "" + Ayang +" /100";
         KewarasanSlider.value = Kewarasan;
         EnergySlider.value = Energy;
-
+    
 
         if (Kewarasan <= 0)
             YouCreazy();
         if (Uang <= 0)
             YouPoor();
+        if (Ibu <= 0)
+            YouAzab();
 
     }
    
@@ -100,7 +108,7 @@ public class GameManager : MonoBehaviour
         {
             DisplayWorkPanel();
             Energy = Energy - CostWork;
-            Uang = Uang + 100000;
+            Uang = Uang + 100;
             Kewarasan = Kewarasan - 30;
             UpdateUI();
         }
@@ -108,18 +116,17 @@ public class GameManager : MonoBehaviour
         {
             DisplayMessage("Energy Kurang");
         }
-
-
     }
 
     public void ClickPlayButton()
     {
 
-        if (Energy - CostWork >= 0)
+        if (Energy - CostPlay >= 0)
         {
-            Energy = Energy - CostWork;
+            Energy = Energy - CostPlay;
             Kewarasan = Kewarasan + 30;
-            Uang = Uang - 50000;
+            Uang = Uang - 50;
+            DisplayMessage("Sedang Bermain");
             UpdateUI();
         }
         else
@@ -134,8 +141,10 @@ public class GameManager : MonoBehaviour
         {
             Energy = Energy - CostWatch;
             Kewarasan = Kewarasan + 20;
-            Uang = Uang - 30000;
+            Uang = Uang - 30;
+            DisplayMessage("Sedang Menonton");
             UpdateUI();
+            
         }
         else
         {
@@ -147,14 +156,58 @@ public class GameManager : MonoBehaviour
     public void ClickSleepButton()
     {
         DisplayNextDay();
+
         Energy = MaxEnergy;
         Kewarasan = Kewarasan + 20;
-        Uang = Uang - 50000;
+        Uang = Uang - 50;
         Hari = Hari + TambahHari;
+        Ibu = Ibu - 5;
         UpdateUI();
 
     }
+    public void ClickIbuButton()
+    {
+        if (Uang - CostIbu >= 0)
+        {
+            Energy = Energy - CostIbu;
+            Uang = Uang - CostIbu;
+            Kewarasan = Kewarasan + CostIbu;
+            Ibu = Ibu + 20;
+            DisplayMessage("Kamu Memberikan Uang Kepada Ibu");
+            UpdateUI();
+        }
+        else
+        {
+            DisplayMessage("Uang Kurang");
+        }
+    }
     
+
+
+    public void ClickAyangButton()
+    {
+        if (Energy - CostDate >= 0)
+        {
+            if (Uang - CostUangDate >= 0)
+            {
+                Energy = Energy - CostDate;
+                Uang = Uang - CostUangDate;
+                Kewarasan = MaxKewarasan;
+                Ayang = Ayang + CostDate;
+                UpdateUI();
+            }
+            else
+            {
+                DisplayMessage("Uang Kurang");
+            }
+            
+
+        }
+        else
+        {
+            DisplayMessage("Energi Kurang");
+        }
+    }
     public void setupgame()
     {
         Energy = MaxEnergy;
@@ -164,53 +217,78 @@ public class GameManager : MonoBehaviour
         KewarasanSlider.maxValue = MaxKewarasan;
 
         Ibu = MaxIbu;
-        Ayang = 0;
+        Ayang = 10;
         Hari = 1;
-        Uang = 200000;
+        Uang = 200;
         UpdateUI();
 
     }
-    
+    public void BackMainMenuButton()
+    {
+        SceneManager.LoadScene("Main Menu");
+    }
+
+    public void ExitGameButton()
+    {
+        Application.Quit();
+    }
+
     public void AktivitasButton()
     {
         AktivPanel.SetActive(true);
     }
 
-    public void EscButton()
+    public void HideAktivitasButton()
     {
         AktivPanel.SetActive(false);
     }
 
-    public void ClickIbuButton()
+    public void ClickHPButton()
     {
-        if (Energy - CostDate >= 0)
-        {
-            Debug.Log("Enggak Tau Ngapain");
-            UpdateUI();
-        }
+        HpPanel.SetActive(true);
     }
-    public void ClickAyangButton()
+    public void HideHpButton()
     {
-        if (Energy - CostDate >= 0)
-        {
-
-            Debug.Log("Ngedate");
-            UpdateUI();
-        }
+        HpPanel.SetActive(false);
     }
 
+    public void ClickRelationButton()
+    {
+        RelationPanel.SetActive(true);
+    }
+    public void HideRelationButton()
+    {
+        RelationPanel.SetActive(false);
+    }
 
+    public void ClickHelpButton()
+    {
+        HelpPanel.SetActive(true);
+    }
+    public void HideHelpButton()
+    {
+        HelpPanel.SetActive(false);
+    }
+
+
+    
+
+    //ending
     public void YouCreazy()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene("EndWaras");
     }
 
     public void YouPoor()
     {
-        
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
-    }
 
+        SceneManager.LoadScene("EndMiskin");
+    }
+    public void YouAzab()
+    {
+
+        SceneManager.LoadScene("EndIbu");
+    }
     public void DisplayMessage(string value)
     {
         MessageText.text = value;
@@ -228,7 +306,7 @@ public class GameManager : MonoBehaviour
     {
         
         NextDayPanel.SetActive(true);
-        Invoke("HideNextDay", 2);
+        Invoke("HideNextDay", 4);
     }
 
     public void HideNextDay()
@@ -241,7 +319,7 @@ public class GameManager : MonoBehaviour
     {
 
         WorkPanel.SetActive(true);
-        Invoke("HideWorkPanel", 2);
+        Invoke("HideWorkPanel", 6);
     }
 
     public void HideWorkPanel()
@@ -250,39 +328,31 @@ public class GameManager : MonoBehaviour
         WorkPanel.SetActive(false);
     }
 
-    public void EventIbu()
-    {
-        if (Hari == IbuEvent)
-        {
-            Debug.Log("Ibu Nelpon");
-
-
-        }
-    }
+ 
 
     public void EndingScene()
     {
         if (Hari == Ending)
         {
-            if (Ibu == MaxIbu && Ayang == MaxAyang && Uang >= 2000000)
+            if (Ibu >= 80 && Ayang >= 80 && Uang >= 1600)
             {
-                Debug.Log("Ending Best");
+                SceneManager.LoadScene("EndBest");
             }
             
             
             else if (Ibu > 1 && Uang > 1 )
             {
-                if (Ayang == MaxAyang)
+                if (Ayang >= 80)
                 {
-                    Debug.Log("Ending Heroin");
+                    SceneManager.LoadScene("EndHeroin");
                 }
-                else if (Uang >= 2000000)
+                else if (Uang >= 1600)
                 {
-                    Debug.Log("Ending Workaholic");
+                    SceneManager.LoadScene("EndWork");
                 }
                 else {
-                    Debug.Log("Ending Normal");
-                    }
+                    SceneManager.LoadScene("EndNormal");
+                }
             }
 
 
